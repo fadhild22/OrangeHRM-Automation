@@ -2,6 +2,3 @@ selenium
 pytest
 pytest-html
 webdriver-manager
-requests
-pandas
-openpyxl
