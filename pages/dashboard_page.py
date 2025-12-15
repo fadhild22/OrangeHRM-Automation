@@ -17,3 +17,7 @@ class DashboardPage(BasePage):
     def navigate_to_menu(self, menu_name):
         MENU_LOCATOR = (By.LINK_TEXT, menu_name)
         self.click(MENU_LOCATOR)
+    
+    def navigate_to_menu(self, menu_name):
+        MENU_LOCATOR = (By.XPATH, f"//span[text()='{menu_name}']")
+        self.click(MENU_LOCATOR)
