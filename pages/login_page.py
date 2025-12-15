@@ -10,7 +10,7 @@ class LoginPage(BasePage):
     REQUIRED_MSG = (By.XPATH, "//span[contains(@class, 'oxd-input-field-error-message')]")
     
     FORGOT_PASS_LINK = (By.CSS_SELECTOR, ".orangehrm-login-forgot-header")
-    RESET_PAGE_TITLE = (By.CSS_SELECTOR, "orangehrm-forgot-password-title")
+    RESET_PAGE_TITLE = (By.XPATH, "//h6[text()='Reset Password']")
     
     def login(self, username, password):
         if username:

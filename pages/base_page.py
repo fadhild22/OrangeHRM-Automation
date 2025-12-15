@@ -16,7 +16,7 @@ class BasePage:
         return self.wait.until(EC.visibility_of_element_located(locator))
     
     def click(self, locator):
-        element = self.wait.utill(EC.element_to_be_clickable(locator))
+        element = self.wait.until(EC.element_to_be_clickable(locator))
         element.click()
     
     def set_text(self, locator, text):

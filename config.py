@@ -8,7 +8,7 @@ class Config:
     ADMIN_USER = "Admin"
     ADMIN_PASS = "admin123"
     
-    INVALID_USER = "Admin"
+    EMPTY_USER = ""
     INVALID_PASS = "password_salah"
     
     TIMESTAMP = str(int(time.time()))
