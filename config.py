@@ -18,7 +18,10 @@ class Config:
     
     EMP_FIRST_NAME = "Riski"
     EMP_LAST_NAME = f"Inrahim{TIMESTAMP}"
-    EMP_ID = str(random.randint(10000, 99999))
+    
+    @staticmethod
+    def get_random_id():
+        return str(random.randint(1000, 9999))
     
     CANDIDATE_FIRST_NAME = "Truno"
     CANDIDATE_LAST_NAME = f" Pambudi{TIMESTAMP}"

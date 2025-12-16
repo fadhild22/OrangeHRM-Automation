@@ -19,9 +19,10 @@ class TestPIM:
         
         dashboard_page.navigate_to_menu("PIM")
         pim_page.click_add_employee()
+        unique_id = Config.get_random_id()
         
-        print(f"\n[Data]Creating employee: {Config.EMP_FIRST_NAME} {Config.EMP_LAST_NAME}")
-        pim_page.fill_employee_data(Config.EMP_FIRST_NAME, Config.EMP_LAST_NAME)
+        print(f"\n[Data]Creating employee: {Config.EMP_FIRST_NAME} ID: {unique_id}")
+        pim_page.fill_employee_data(Config.EMP_FIRST_NAME, Config.EMP_LAST_NAME, unique_id)
         
         pim_page.click_save()
         
@@ -38,7 +39,9 @@ class TestPIM:
         dashboard_page.navigate_to_menu("PIM")
         
         pim_page.click_add_employee()
-        pim_page.fill_employee_data(Config.EMP_FIRST_NAME, Config.EMP_LAST_NAME)
+        unique_id = Config.get_random_id()
+        
+        pim_page.fill_employee_data(Config.EMP_FIRST_NAME, Config.EMP_LAST_NAME, unique_id)
         pim_page.click_save()
         
         pim_page.wait_for_save_completion()
@@ -47,7 +50,7 @@ class TestPIM:
         full_name = f"{Config.EMP_FIRST_NAME} {Config.EMP_LAST_NAME}"
         pim_page.search_employee(full_name)
         
-        pim_page.click_edit_icon()
+        pim_page.click_edit_icon(full_name)
         pim_page.fill_employee_data("Edited" + Config.EMP_FIRST_NAME, Config.EMP_LAST_NAME)
         pim_page.click_save()
         
@@ -63,18 +66,19 @@ class TestPIM:
         dashboard_page.navigate_to_menu("PIM")
         
         pim_page.click_add_employee()
-        pim_page.fill_employee_data("ToBeDeleted", Config.EMP_LAST_NAME)
-        pim_page.click_save()
+        unique_id = Config.get_random_id()
+        name_to_delete = "ToBeDeleted"
         
+        pim_page.fill_employee_data(name_to_delete, Config.EMP_LAST_NAME, unique_id)
+        pim_page.click_save()
         pim_page.wait_for_save_completion()
         
         dashboard_page.navigate_to_menu("PIM")
-        full_name = f"ToBeDeleted {Config.EMP_LAST_NAME}"
-        pim_page.search_employee(full_name)
+        full_name = f"{name_to_delete} {Config.EMP_LAST_NAME}"
+        pim_page.search_employee(emp_id=unique_id)
+        pim_page.click_delete_icon(full_name)
         
-        pim_page.click_delete_icon()
         pim_page.confirm_delete()
-        
         assert "Success" in pim_page.get_success_message()
     
 if __name__ == "__main__":
