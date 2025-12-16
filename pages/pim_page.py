@@ -1,7 +1,8 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC        
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException        
 from pages.base_page import BasePage
-import time
 
 class PIMPage (BasePage):
     ADD_BTN = (By.XPATH, "//button[text()=' Add ']")
@@ -24,7 +25,7 @@ class PIMPage (BasePage):
         self.set_text(self.FIRST_NAME_FIELD, first_name)   
         self.set_text(self.LAST_NAME_FIELD, last_name)
         if emp_id:
-            self.find(self.EMP_ID_FIELD).clear()
+            self.find(self.EMP_ID_FIELD).send_keys("\ue003"*10)
             self.set_text(self.EMP_ID_FIELD, emp_id)
     
     def click_save(self):
@@ -32,7 +33,7 @@ class PIMPage (BasePage):
             self.wait.until(EC.invisibility_of_element_located(self.LOADER))
         except:
             pass
-        time.sleep(1)
+        self.wait.until(EC.element_to_be_clickable(self.SAVE_BTN))
         self.click(self.SAVE_BTN)
     
     def get_success_message(self):
@@ -48,21 +49,45 @@ class PIMPage (BasePage):
         
         if emp_id:
             self.set_text(self.SEARCH_ID_FIELD, emp_id)
-        self.click(self.SEARCH_BTN)
-        try:
-            self.wait.until(EC.invisibility_of_element_located(self.LOADER))
-        except:
-            pass
-        time.sleep(1)
+        short_wait = WebDriverWait(self.driver, 3)
+        
+        for attempt in range(3):
+            self.click(self.SEARCH_BTN)
+            try:
+                self.wait.until(EC.invisibility_of_element_located(self.LOADER))
+            except:
+                pass
+        
+        if emp_id:
+            xpath_record = f"//div[@role='row' and contains(., '{emp_id}')]"
+            try:
+                short_wait.until(EC.visibility_of_element_located((By.XPATH, xpath_record)))
+                return
+            except TimeoutException:
+                pass
+        
+        if emp_id:
+            xpath_record = f"//div[@role='row' and contains(., '{emp_id}')]"
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath_record)))
     
-    def click_edit_icon(self, employee_name):
-        xpath_dynamic = f"//div[@role = 'row' and contains(., '{employee_name}')]//button[.//i[contains(@class, 'bi-pencil-fill')]]"
-        self.click((By.XPATH, xpath_dynamic))
-
-    def click_delete_icon(self, employee_name):
-        xpath_dynamic = f"//div[@role='row' and contains(., '{employee_name}')]//button[.//i[contains(@class, 'bi-trash')]]"
-        self.click((By.XPATH, xpath_dynamic))
+    def click_edit_icon(self, value):
+        row_xpath = f"//div[@role = 'row' and contains(., '{value}')]"
+        self.wait.until(EC.visibility_of_element_located((By.XPATH, row_xpath)))
+        btn_xpath = f"{row_xpath}//button[.//i[contains(@class, 'bi-pencil-fill')]]"
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, btn_xpath)))
+        self.click((By.XPATH, btn_xpath))
+    
+    def wait_for_edit_page_load(self, expected_firstname):
+        self.wait.until(EC.text_to_be_present_in_element_value(self.FIRST_NAME_FIELD, expected_firstname))
+        
+    def click_delete_icon(self, value):
+        row_xpath = f"//div[@role='row' and contains(., '{value}')]"
+        self.wait.until(EC.visibility_of_element_located((By.XPATH, row_xpath)))
+        btn_xpath = f"{row_xpath}//button[.//i[contains(@class, 'bi-trash')]]"
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, btn_xpath)))
+        self.click((By.XPATH, btn_xpath))
     
     def confirm_delete(self):
-        CONFIRM_BTN = (By.XPATH, "//button[contains(., ' Yes, Delete ')]") 
+        CONFIRM_BTN = (By.XPATH, "//button[contains(., ' Yes, Delete ')]")
+        self.wait.until(EC.element_to_be_clickable(CONFIRM_BTN))
         self.click(CONFIRM_BTN)

@@ -48,9 +48,10 @@ class TestPIM:
         
         dashboard_page.navigate_to_menu("PIM")
         full_name = f"{Config.EMP_FIRST_NAME} {Config.EMP_LAST_NAME}"
-        pim_page.search_employee(full_name)
+        pim_page.search_employee(emp_id=unique_id)
         
-        pim_page.click_edit_icon(full_name)
+        pim_page.click_edit_icon(unique_id)
+        pim_page.wait_for_edit_page_load(Config.EMP_FIRST_NAME)
         pim_page.fill_employee_data("Edited" + Config.EMP_FIRST_NAME, Config.EMP_LAST_NAME)
         pim_page.click_save()
         
@@ -73,10 +74,11 @@ class TestPIM:
         pim_page.click_save()
         pim_page.wait_for_save_completion()
         
+
         dashboard_page.navigate_to_menu("PIM")
         full_name = f"{name_to_delete} {Config.EMP_LAST_NAME}"
         pim_page.search_employee(emp_id=unique_id)
-        pim_page.click_delete_icon(full_name)
+        pim_page.click_delete_icon(unique_id)
         
         pim_page.confirm_delete()
         assert "Success" in pim_page.get_success_message()
