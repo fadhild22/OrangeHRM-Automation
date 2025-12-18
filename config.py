@@ -13,11 +13,11 @@ class Config:
     
     TIMESTAMP = str(int(time.time()))
         
-    NEW_ADMIN_USER = f"Riskiwolfgang{TIMESTAMP}"
-    NEW_JOB_TITLE = f"QA Lead {TIMESTAMP}"
+    NEW_ADMIN_USER = f"Riski{TIMESTAMP[-4:]}"
+    NEW_JOB_TITLE = f"QA Lead"
     
     EMP_FIRST_NAME = "Riski"
-    EMP_LAST_NAME = f"Inrahim{TIMESTAMP}"
+    EMP_LAST_NAME = f"Inrahim"
     
     @staticmethod
     def get_random_id():

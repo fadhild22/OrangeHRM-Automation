@@ -3,6 +3,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from pages.login_page import LoginPage
 from pages.dashboard_page import DashboardPage
 from pages.pim_page import PIMPage
@@ -26,7 +28,7 @@ class TestAdmin:
         unique_id = Config.get_random_id()
         first_name = Config.EMP_FIRST_NAME
         last_name = f"{Config.EMP_LAST_NAME}{unique_id}"
-        full_employee_name = f"{first_name}{last_name}"
+        full_employee_name = f"{first_name} {last_name}"
         
         pim_page.fill_employee_data(first_name, last_name, unique_id)
         pim_page.click_save()
@@ -61,6 +63,7 @@ class TestAdmin:
         dashboard_page.navigate_to_menu("PIM")
         pim_page.click_add_employee()
         unique_id = Config.get_random_id()
+        
         full_employee_name = f"{Config.EMP_FIRST_NAME} {Config.EMP_LAST_NAME}{unique_id}"
         pim_page.fill_employee_data(Config.EMP_FIRST_NAME, f"{Config.EMP_LAST_NAME}{unique_id}", unique_id)
         pim_page.click_save()
@@ -110,9 +113,13 @@ class TestAdmin:
         admin_page.click_save()
         admin_page.wait_for_save_completion()
         
+        WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located(admin_page.SEARCH_BTN)
+        )
         admin_page.click_add_user()
         print(f"[Negative Test] Input Duplicate Username from Config: {target_username}")
         admin_page.fill_user_data(full_employee_name, target_username, "Password123!")
+        admin_page.verify_error_message_contains("Already exist")
         
         error_msg = admin_page.get_input_error_message()
         print(f"Error Message Found: {error_msg}")

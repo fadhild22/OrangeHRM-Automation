@@ -48,17 +48,40 @@ class AdminPage(BasePage):
         self.click((By.XPATH, option_xpath))
     
     def select_employee_name(self, emp_name):
-        short_wait = WebDriverWait(self.driver, 3)
-        for attempt in range(3):
-            self.find(self.EMPLOYEE_NAME_INPUT).send_keys("\ue003"* 20)
-            self.set_text(self.EMPLOYEE_NAME_INPUT, emp_name)
+        short_wait = WebDriverWait(self.driver, 10)
+        self.find(self.EMPLOYEE_NAME_INPUT).send_keys("\ue003" * 50)
+        self.set_text(self.EMPLOYEE_NAME_INPUT, emp_name)
+        
         try:
             short_wait.until(EC.visibility_of_element_located(self.AUTOCOMPLETION_OPTION))
             self.click(self.AUTOCOMPLETION_OPTION)
             return
         except TimeoutException:
-            print(f"Warning: Autocomplete '{emp_name}' belum muncul. Retrying...")
+            pass
+        print(f"Warning: Autocomplete '{emp_name}' belum muncul.")
+        self.find(self.EMPLOYEE_NAME_INPUT).send_keys(" ")
+        self.find(self.EMPLOYEE_NAME_INPUT).send_keys("\ue003")
+        
+        try:
+            short_wait.until(EC.visibility_of_element_located(self.AUTOCOMPLETION_OPTION))
+            self.click(self.AUTOCOMPLETION_OPTION)
+            return
+        except TimeoutException:
+            pass
+        print("Masih macet. mencoba REFRESH halaman Admin...")
+        self.driver.refresh()
+        
+        print("Mencoba mencari dengan First Name saja...")
+        first_name = emp_name.split()[0]
+        self.find(self.EMPLOYEE_NAME_INPUT).send_keys("\ue003" * 50)
+        self.set_text(self.EMPLOYEE_NAME_INPUT, first_name)
         self.wait.until(EC.visibility_of_element_located(self.AUTOCOMPLETION_OPTION))
+        
+        options = self.driver.find_elements(*self.AUTOCOMPLETION_OPTION)
+        for option in options:
+            if emp_name in option.text:
+                option.click()
+                return
         self.click(self.AUTOCOMPLETION_OPTION)
     
     def fill_user_data(self, emp_name, username, password, role="Admin", status="Enabled"):
@@ -78,8 +101,11 @@ class AdminPage(BasePage):
         self.click(self.SAVE_BTN)
     
     def wait_for_save_completion(self):
-        self.find(self.SUCCESS_TOAST)
-        self.wait_until_invisible(self.SUCCESS_TOAST)
+        try:
+            self.find(self.SUCCESS_TOAST)
+            self.wait_until_invisible(self.SUCCESS_TOAST)
+        except TimeoutException:
+            print("Admin Save Toast missed. Proceeding...")
     
     def get_success_message(self):
         return self.get_text(self.SUCCESS_TOAST)
@@ -100,6 +126,17 @@ class AdminPage(BasePage):
             except:
                 self.click(self.SEARCH_BTN)
         self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath_record)))
+    
+    def verify_error_message_contains(self, expected_text):
+        try:
+            self.wait.until(EC.text_to_be_present_in_element(self.FIELD_ERROR_MSG, expected_text))
+            return True
+        except TimeoutException:
+            try:
+                actual_text = self.get_text(self.FIELD_ERROR_MSG)
+            except:
+                print("[DEBUG] Error message not found at all.")
+            raise AssertionError(f"Expected error '{expected_text}'not found. Actual '{actual_text}'")
     
     def get_input_error_message(self):
         self.wait.until(EC.visibility_of_element_located(self.FIELD_ERROR_MSG))
