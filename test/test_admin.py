@@ -24,8 +24,8 @@ class TestAdmin:
         pim_page.click_add_employee()
         
         unique_id = Config.get_random_id()
-        first_name = "AdminCandidate"
-        last_name = f"User{unique_id}"
+        first_name = Config.EMP_FIRST_NAME
+        last_name = f"{Config.EMP_LAST_NAME}{unique_id}"
         full_employee_name = f"{first_name}{last_name}"
         
         pim_page.fill_employee_data(first_name, last_name, unique_id)
@@ -61,18 +61,17 @@ class TestAdmin:
         dashboard_page.navigate_to_menu("PIM")
         pim_page.click_add_employee()
         unique_id = Config.get_random_id()
-        first_name = "SearchTarget"
-        last_name = f"User{unique_id}"
-        full_employee_name = f"{first_name}{last_name}"
-        pim_page.fill_employee_data(first_name, last_name, unique_id)
+        full_employee_name = f"{Config.EMP_FIRST_NAME} {Config.EMP_LAST_NAME}{unique_id}"
+        pim_page.fill_employee_data(Config.EMP_FIRST_NAME, f"{Config.EMP_LAST_NAME}{unique_id}", unique_id)
         pim_page.click_save()
         pim_page.wait_for_save_completion()
         
         dashboard_page.navigate_to_menu("Admin")
         admin_page.click_add_user()
-        target_username = f"search_user_{unique_id}"
+        target_username = f"search_{unique_id}"
         admin_page.fill_user_data(full_employee_name, target_username, "Password123!")
         admin_page.click_save()
+        admin_page.wait_for_save_completion()
         
         try:
             admin_page.wait_for_save_completion()
@@ -81,7 +80,7 @@ class TestAdmin:
         print(f"\n[Data] Searching User: {target_username}")
         admin_page.search_user(target_username)
     
-    def test_ohrm_add_username_exist(self, driver):
+    def test_ohrm008_add_username_exist(self, driver):
         login_page = LoginPage(driver)
         dashboard_page = DashboardPage(driver)
         pim_page = PIMPage(driver)
@@ -94,9 +93,9 @@ class TestAdmin:
         pim_page.click_add_employee()
         
         unique_id = Config.get_random_id()
-        first_name = "ExistUser"
-        last_name = f"Test{unique_id}"
-        full_name = f"{first_name}{last_name}"
+        first_name = Config.EMP_FIRST_NAME
+        last_name = f"{Config.EMP_LAST_NAME}{unique_id}"
+        full_employee_name = f"{first_name} {last_name}"
         
         pim_page.fill_employee_data(first_name, last_name, unique_id)
         pim_page.click_save()
@@ -104,15 +103,16 @@ class TestAdmin:
         
         dashboard_page.navigate_to_menu("Admin")
         admin_page.click_add_user()
-        EXISTING_USERNAME = f"exist_admin_{unique_id}"
+        target_username = Config.NEW_ADMIN_USER
         
-        admin_page.fill_user_data(full_name, EXISTING_USERNAME, "Password123!")
+        print(f"\n[Setup] Creating Initial User: {target_username}")
+        admin_page.fill_user_data(full_employee_name, target_username, "Password123!")
         admin_page.click_save()
         admin_page.wait_for_save_completion()
         
         admin_page.click_add_user()
-        print(f"\n[Negative Test] Trying to create user with existing username: {EXISTING_USERNAME}")
-        admin_page.fill_user_data(full_name, EXISTING_USERNAME, "Password123!")
+        print(f"[Negative Test] Input Duplicate Username from Config: {target_username}")
+        admin_page.fill_user_data(full_employee_name, target_username, "Password123!")
         
         error_msg = admin_page.get_input_error_message()
         print(f"Error Message Found: {error_msg}")
@@ -130,17 +130,15 @@ class TestAdmin:
         dashboard_page.navigate_to_menu("PIM")
         pim_page.click_add_employee()
         unique_id = Config.get_random_id()
-        first_name = "EditUser"
-        last_name = f"Test{unique_id}"
-        full_name = f"{first_name} {last_name}"
-        pim_page.fill_employee_data(first_name, last_name, unique_id)
+        full_employee_name = f"{Config.EMP_FIRST_NAME} {Config.EMP_LAST_NAME}{unique_id}"
+        pim_page.fill_employee_data(Config.EMP_FIRST_NAME, f"{Config.EMP_LAST_NAME}{unique_id}", unique_id)
         pim_page.click_save()
         pim_page.wait_for_save_completion()
         
         dashboard_page.navigate_to_menu("Admin")
         admin_page.click_add_user()
         username_to_edit = f"edit_user_{unique_id}"
-        admin_page.fill_user_data(full_name, username_to_edit, "Password123!", role="Admin")
+        admin_page.fill_user_data(full_employee_name, username_to_edit, "Password123!")
         admin_page.click_save()
         admin_page.wait_for_save_completion()
         
@@ -164,7 +162,7 @@ class TestAdmin:
         admin_page.click_add_user()
         
         unique_id = Config.get_random_id()
-        new_job_title = f"QA Lead {unique_id}"
+        new_job_title = f"{Config.NEW_JOB_TITLE} {Config.get_random_id()}"
         print(f"\n[Data] Creating Job Title: {new_job_title}")
         admin_page.fill_job_title(new_job_title)
         admin_page.click_save()

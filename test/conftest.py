@@ -1,5 +1,6 @@
 import pytest
 import os
+from datetime import datetime
 from selenium import webdriver
 from config import Config
 
@@ -31,7 +32,9 @@ def driver(request):
         if not os.path.exists(screenshot_dir):
             os.makedirs(screenshot_dir)
         
-        file_name = f"{request.node.name}.png"
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        test_name = request.node.name.replace(" ", "_")
+        file_name = f"{test_name}_{timestamp}.png"
         file_path = os.path.join(screenshot_dir, file_name)
         
     try:

@@ -21,7 +21,7 @@ class Config:
     
     @staticmethod
     def get_random_id():
-        return str(random.randint(1000, 9999))
+        return str(random.randint(100, 999))
     
     CANDIDATE_FIRST_NAME = "Truno"
     CANDIDATE_LAST_NAME = f" Pambudi{TIMESTAMP}"

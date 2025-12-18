@@ -1,5 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 from pages.base_page import BasePage
 
 class AdminPage(BasePage):
@@ -22,8 +24,8 @@ class AdminPage(BasePage):
     SEARCH_BTN = (By.CSS_SELECTOR, "button[type='submit']")
     
     FIELD_ERROR_MSG = (By.XPATH, "//span[contains(@class, 'oxd-input-field-error-message')]")
-    JOB_MENU_DROPDOWN = (By.XPATH, "//span[contains(., 'Job')]")
-    JOB_TITLES_ITEM = (By.XPATH, "//a[contains(., 'Job Titles')]")
+    JOB_MENU_DROPDOWN = (By.XPATH, "//span[contains(@class, 'oxd-topbar-body-nav-tab-item') and contains(., 'Job')]")
+    JOB_TITLES_ITEM = (By.XPATH, "//a[contains(@class, 'oxd-topbar-body-nav-tab-link') and contains(., 'Job Titles')]")
     JOB_TITLE_FIELD = (By.XPATH, "//label[text()='Job Title']/parent::div/parent::div//input")
     
     def navigate_to_admin(self):
@@ -42,11 +44,20 @@ class AdminPage(BasePage):
     def select_status(self, status_name="Enabled"):
         self.click(self.STATUS_DROPDOWN)
         option_xpath = f"//div[@role='listbox']//span[text()='{status_name}']"
-        self.wait.untill(EC.visibility_of_element_located((By.XPATH, option_xpath)))
+        self.wait.until(EC.visibility_of_element_located((By.XPATH, option_xpath)))
         self.click((By.XPATH, option_xpath))
     
     def select_employee_name(self, emp_name):
-        self.set_text(self.EMPLOYEE_NAME_INPUT, emp_name)
+        short_wait = WebDriverWait(self.driver, 3)
+        for attempt in range(3):
+            self.find(self.EMPLOYEE_NAME_INPUT).send_keys("\ue003"* 20)
+            self.set_text(self.EMPLOYEE_NAME_INPUT, emp_name)
+        try:
+            short_wait.until(EC.visibility_of_element_located(self.AUTOCOMPLETION_OPTION))
+            self.click(self.AUTOCOMPLETION_OPTION)
+            return
+        except TimeoutException:
+            print(f"Warning: Autocomplete '{emp_name}' belum muncul. Retrying...")
         self.wait.until(EC.visibility_of_element_located(self.AUTOCOMPLETION_OPTION))
         self.click(self.AUTOCOMPLETION_OPTION)
     
@@ -60,11 +71,15 @@ class AdminPage(BasePage):
     
     def click_save(self):
         try:
-            self.wait.untill(EC.invisibility_of_element_located(self.LOADER))
+            self.wait.until(EC.invisibility_of_element_located(self.LOADER))
         except:
             pass
-        self.wait.until(EC.invisibility_of_element_located(self.SAVE_BTN))
+        self.wait.until(EC.element_to_be_clickable(self.SAVE_BTN))
         self.click(self.SAVE_BTN)
+    
+    def wait_for_save_completion(self):
+        self.find(self.SUCCESS_TOAST)
+        self.wait_until_invisible(self.SUCCESS_TOAST)
     
     def get_success_message(self):
         return self.get_text(self.SUCCESS_TOAST)
@@ -73,6 +88,17 @@ class AdminPage(BasePage):
         self.set_text(self.SEARCH_USERNAME_FIELD, username)
         self.click(self.SEARCH_BTN)
         xpath_record = f"//div[@role='row' and contains(., '{username}')]"
+        short_wait = WebDriverWait(self.driver, 2)
+        for attempt in range(3):
+            try:
+                self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath_record)))
+            except: pass
+            
+            try:
+                short_wait.until(EC.visibility_of_element_located((By.XPATH, xpath_record)))
+                return
+            except:
+                self.click(self.SEARCH_BTN)
         self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath_record)))
     
     def get_input_error_message(self):
@@ -99,6 +125,11 @@ class AdminPage(BasePage):
         row_xpath = f"//div[@role='row' and contains(., '{item_name}')]"
         self.wait.until(EC.visibility_of_element_located((By.XPATH, row_xpath)))
         
-        btn_xpath = f"{row_xpath}//button[.//i[contains@class, 'bi-trash']]"
+        btn_xpath = f"{row_xpath}//button[.//i[contains(@class, 'bi-trash')]]"
         self.wait.until(EC.element_to_be_clickable((By.XPATH, btn_xpath)))
         self.click((By.XPATH, btn_xpath))
+    
+    def confirm_delete(self):
+        CONFIRM_BTN = (By.XPATH, "//button[contains(., ' Yes, Delete ')]")
+        self.wait.until(EC.element_to_be_clickable(CONFIRM_BTN))
+        self.click(CONFIRM_BTN)
