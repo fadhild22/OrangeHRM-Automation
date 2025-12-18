@@ -119,4 +119,80 @@ class TestAdmin:
         assert "Already exists" in error_msg
     
     def test_ohrm009_edit_user_details(self, driver):
+        login_page = LoginPage(driver)
+        dashboard_page = DashboardPage(driver)
+        pim_page = PIMPage(driver)
+        admin_page = AdminPage(driver)
         
+        login_page.open_url(Config.BASE_URL_UI)
+        login_page.login(Config.ADMIN_USER, Config.ADMIN_PASS)
+        
+        dashboard_page.navigate_to_menu("PIM")
+        pim_page.click_add_employee()
+        unique_id = Config.get_random_id()
+        first_name = "EditUser"
+        last_name = f"Test{unique_id}"
+        full_name = f"{first_name} {last_name}"
+        pim_page.fill_employee_data(first_name, last_name, unique_id)
+        pim_page.click_save()
+        pim_page.wait_for_save_completion()
+        
+        dashboard_page.navigate_to_menu("Admin")
+        admin_page.click_add_user()
+        username_to_edit = f"edit_user_{unique_id}"
+        admin_page.fill_user_data(full_name, username_to_edit, "Password123!", role="Admin")
+        admin_page.click_save()
+        admin_page.wait_for_save_completion()
+        
+        print(f"\n[Data] Editing User: {username_to_edit}")
+        admin_page.search_user(username_to_edit)
+        admin_page.click_edit_user(username_to_edit)
+        admin_page.select_user_role("ESS")
+        admin_page.click_save()
+        assert "Success" in admin_page.get_success_message()
+    
+    def test_ohrm010_add_new_job_title(self, driver):
+        login_page = LoginPage(driver)
+        dashboard_page = DashboardPage(driver)
+        admin_page = AdminPage(driver)
+        
+        login_page.open_url(Config.BASE_URL_UI)
+        login_page.login(Config.ADMIN_USER, Config.ADMIN_PASS)
+        
+        dashboard_page.navigate_to_menu("Admin")
+        admin_page.navigate_to_job_titles()
+        admin_page.click_add_user()
+        
+        unique_id = Config.get_random_id()
+        new_job_title = f"QA Lead {unique_id}"
+        print(f"\n[Data] Creating Job Title: {new_job_title}")
+        admin_page.fill_job_title(new_job_title)
+        admin_page.click_save()
+        assert "Success" in admin_page.get_success_message()
+    
+    def test_ohrm011_delete_job_title(self, driver):
+        login_page = LoginPage(driver)
+        dashboard_page = DashboardPage(driver)
+        admin_page = AdminPage(driver)
+        
+        login_page.open_url(Config.BASE_URL_UI)
+        login_page.login(Config.ADMIN_USER, Config.ADMIN_PASS)
+        
+        dashboard_page.navigate_to_menu("Admin")
+        admin_page.navigate_to_job_titles()
+        admin_page.click_add_user()
+        
+        unique_id = Config.get_random_id()
+        job_to_delete = f"Job To Delete {unique_id}"
+        
+        admin_page.fill_job_title(job_to_delete)
+        admin_page.click_save()
+        admin_page.wait_for_save_completion()
+        
+        print(f"\n[Data] Deleting Job Title: {job_to_delete}")
+        admin_page.click_delete_icon_generic(job_to_delete)
+        admin_page.confirm_delete()
+        assert "Success" in admin_page.get_success_message()
+
+if __name__ == "__main__":
+    pytest.main(["-v", "-s", __file__])
