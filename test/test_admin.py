@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from pages.login_page import LoginPage
 from pages.dashboard_page import DashboardPage
 from pages.pim_page import PIMPage
-from pages.admin_pages import AdminPage
+from pages.admin_page import AdminPage
 from config import Config
 
 class TestAdmin:

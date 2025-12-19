@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 
 class LoginPage(BasePage): 
@@ -12,6 +13,10 @@ class LoginPage(BasePage):
     FORGOT_PASS_LINK = (By.CSS_SELECTOR, ".orangehrm-login-forgot-header")
     RESET_PAGE_TITLE = (By.XPATH, "//h6[text()='Reset Password']")
     
+    def open_url(self, url):
+        self.driver.get(url)
+        self.wait.until(EC.visibility_of_element_located(self.USERNAME_FIELD))
+    
     def login(self, username, password):
         if username:
             self.set_text(self.USERNAME_FIELD, username)
@@ -20,6 +25,7 @@ class LoginPage(BasePage):
             self.set_text(self.PASSWORD_FIELD, password)
         
         self.click(self.LOGIN_BTN)
+        self.wait.until(EC.url_contains("dashboard"))
     
     def get_error_message(self):
         return self.get_text(self.ERROR_ALERT)
