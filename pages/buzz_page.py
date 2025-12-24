@@ -47,4 +47,3 @@ class BuzzPage(BasePage):
         self.wait.until(EC.element_to_be_clickable(self.CONFIRM_DELETE_BTN))
         self.click(self.CONFIRM_DELETE_BTN)
         self.wait.until(EC.visibility_of_element_located(self.SUCCESS_TOAST))
-        

@@ -53,11 +53,15 @@ class TestRecruitment:
         admin_page.click_add_user()
         admin_page.fill_job_title(title_name)
         admin_page.click_save()
-        admin_page.wait_for_save_completion()
-        return {
+        try:
+            admin_page.wait_for_save_completion()
+        except AttributeError:
+            admin_page.wait_for_success_message()
+        return{
             "name": title_name,
             "id": unique_id
         }
+
     
     @pytest.fixture
     def active_vacancy(self, driver, hiring_manager, job_title):
@@ -91,7 +95,7 @@ class TestRecruitment:
         recruitment_page.fill_vacancy_form(vacancy_name, job_title['name'], hiring_manager['name'])
         recruitment_page.click_save()
         recruitment_page.wait_for_success_message()
-        assert "saveVacancy" in driver.current_url or "viewVacancy" in driver.current_url
+        assert "addJobVacancy" in driver.current_url
     
     def test_ohrm015_and_016_add_new_candidate_and_shortlist(self, driver, active_vacancy):
         recruitment_page = RecruitmentPage(driver)

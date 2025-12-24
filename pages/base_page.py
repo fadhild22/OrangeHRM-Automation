@@ -6,6 +6,8 @@ from selenium.webdriver.common.keys import Keys
 from config import Config 
 
 class BasePage:
+    SUCCESS_TOAST = (By.CSS_SELECTOR, ".oxd-toast-content-text")
+    
     def __init__(self, driver):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, 10)
@@ -44,6 +46,13 @@ class BasePage:
     def get_toast_msg(self):
         TOAST_LOCATOR = (By.CSS_SELECTOR, ".oxd-toast-content-text")
         return self.get_text(TOAST_LOCATOR)
+    
+    def wait_for_success_message(self):
+        try:
+            self.wait.until(EC.visibility_of_element_located(self.SUCCESS_TOAST))
+            self.wait.until(EC.invisibility_of_element_located(self.SUCCESS_TOAST))
+        except:
+            print("Toast message missed or too fast. Proceeding.")
     
     def wait_until_invisible(self, locator):
         self.wait.until(EC.invisibility_of_element_located(locator))

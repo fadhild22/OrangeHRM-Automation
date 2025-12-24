@@ -12,7 +12,6 @@ class RecruitmentPage(BasePage):
     
     ADD_BTN = (By.XPATH, "//button[contains(., ' Add ')]")
     SAVE_BTN = (By.CSS_SELECTOR, "button[type='submit']")
-    SUCCESS_TOAST = (By.CSS_SELECTOR, ".oxd-toast-content-text")
     LOADER = (By.CLASS_NAME, "oxd-form-loader")
     
     VACANCY_NAME_INPUT = (By.XPATH, "//label[text()='Vacancy Name']/parent::div/parent::div//input")
@@ -73,7 +72,7 @@ class RecruitmentPage(BasePage):
         self.select_dropdown_option(self.JOB_TITLE_DROPDOWN, job_title)
         self.fill_hiring_manager(manager)
     
-    def fill_cadidate_form(self, first_name, last_name, email, vacancy_name):
+    def fill_candidate_form(self, first_name, last_name, email, vacancy_name):
         self.set_text(self.FIRST_NAME_INPUT, first_name)
         self.set_text(self.LAST_NAME_INPUT, last_name)
         self.set_text(self.EMAIL_INPUT, email)

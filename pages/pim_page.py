@@ -11,7 +11,6 @@ class PIMPage (BasePage):
     SAVE_BTN = (By.CSS_SELECTOR, "button[type='submit']")
     EMP_ID_FIELD = (By.XPATH, "//label[text()='Employee Id']/parent::div/parent::div//input")
     
-    SUCCESS_TOAST = (By.CSS_SELECTOR, ".oxd-toast-content-text")
     LOADER = (By.CLASS_NAME, "oxd-form-loader")
     
     SEARCH_NAME_FIELD = (By.XPATH, "//label[text()='Employee Name']/parent::div/parent::div//input")
