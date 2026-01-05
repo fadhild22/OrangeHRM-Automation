@@ -12,7 +12,7 @@ class Config:
     INVALID_PASS = "password_salah"
     
     TIMESTAMP = str(int(time.time()))
-        
+    
     NEW_ADMIN_USER = f"Riski{TIMESTAMP[-4:]}"
     NEW_JOB_TITLE = f"QA Lead"
     

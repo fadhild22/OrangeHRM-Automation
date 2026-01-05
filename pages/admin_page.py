@@ -101,11 +101,15 @@ class AdminPage(BasePage):
         self.click(self.SAVE_BTN)
     
     def wait_for_save_completion(self):
+        long_wait = WebDriverWait(self.driver, 20)
         try:
-            self.find(self.SUCCESS_TOAST)
-            self.wait_until_invisible(self.SUCCESS_TOAST)
+            element = long_wait.until(EC.visibility_of_element_located(self.SUCCESS_TOAST))
+            text_message = element.text
+            long_wait.until(EC.invisibility_of_element_located(self.SUCCESS_TOAST))
+            return text_message
         except TimeoutException:
             print("Admin Save Toast missed. Proceeding...")
+            return ""
     
     def get_success_message(self):
         return self.get_text(self.SUCCESS_TOAST)
@@ -126,6 +130,13 @@ class AdminPage(BasePage):
             except:
                 self.click(self.SEARCH_BTN)
         self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath_record)))
+    
+    def verify_user_in_list(self, username):
+        xpath_record = f"//div[@role='row' and contains(., '{username}')]"
+        try:
+            return self.is_displayed((By.XPATH, xpath_record))
+        except:
+            return False
     
     def verify_error_message_contains(self, expected_text):
         try:

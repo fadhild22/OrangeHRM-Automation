@@ -9,10 +9,10 @@ class MaintenancePage(BasePage):
     CONFIRM_BTN = (By.CSS_SELECTOR, "button[type='submit']")
     ERROR_MSG = (By.XPATH, "//p[contains(@class, 'oxd-alert-content-text')]")
     
-    PURGE_TITLE = (By.XPATH, "//h6[contains(text(), 'Purge Employee Records')]")
+    PURGE_TITLE = (By.CLASS_NAME, "orangehrm-main-title")
 
     def navigate_to_maintenance(self):
-        self.click(self.MAINTENANCE_MENU)
+        self.driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/maintenance/viewMaintenanceModule")
         self.wait.until(EC.visibility_of_element_located(self.PASSWORD_INPUT))
     
     def verify_access(self, password):
@@ -21,9 +21,11 @@ class MaintenancePage(BasePage):
     
     def is_access_granted(self):
         try:
+            self.wait.until(EC.url_contains("purgeEmployee"))
             self.wait.until(EC.visibility_of_element_located(self.PURGE_TITLE))
             return True
         except:
+            print(f"Access Verification Failed. Current URL: {self.driver.current_url}")    
             return False
     
     def get_error_message(self):

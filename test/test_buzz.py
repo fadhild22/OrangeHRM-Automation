@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pytest
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from pages.login_page import LoginPage
 from pages.dashboard_page import DashboardPage
 from pages.buzz_page import BuzzPage
@@ -13,21 +14,22 @@ from config import Config
 class TestBuzz:
     @pytest.fixture
     def login(self, driver):
+        driver.maximize_window()
         login_page = LoginPage(driver)
         login_page.open_url(Config.BASE_URL_UI)
         login_page.login(Config.ADMIN_USER, Config.ADMIN_PASS)
-        WebDriverWait(driver, 10).until(EC.url_contains("dashboard"))
+        WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.CLASS_NAME, "oxd-sidepanel-body"))
+        )
     
-    def test_ohrm019_create_like_delete_buzz_post(self, driver, login):
+    def test_ohrm021_22_23_create_like_delete_buzz_post(self, driver, login):
         buzz_page = BuzzPage(driver)
-        dashboard_page = DashboardPage(driver)
-        
         unique_id = Config.get_random_id()
         base_text = getattr(Config, 'BUZZ_POST_TEXT', 'Test Status Update')
         post_content = f"{base_text} {unique_id}"
         
-        dashboard_page.navigate_to_menu()
         buzz_page.navigate_to_buzz()
+        
         print(f"\n[Test] Creating Post: {post_content}")
         buzz_page.create_post(post_content)
         print("[Test] Liking the latest post...")

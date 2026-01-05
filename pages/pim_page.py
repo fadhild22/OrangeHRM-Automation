@@ -39,11 +39,15 @@ class PIMPage (BasePage):
         return self.get_text(self.SUCCESS_TOAST)
     
     def wait_for_save_completion(self):
+        long_wait = WebDriverWait(self.driver, 25)
         try:
-            self.find(self.SUCCESS_TOAST)
-            self.wait_until_invisible(self.SUCCESS_TOAST)
+            element = long_wait.until(EC.visibility_of_element_located(self.SUCCESS_TOAST))
+            message_text = element.text
+            long_wait.until(EC.invisibility_of_element_located(self.SUCCESS_TOAST))
+            return message_text
         except:
             print("PIM Save Toast missed or laggy. Proceeding...")
+            return ""
     
     def search_employee(self, name=None, emp_id=None):
         if name:
