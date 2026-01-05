@@ -28,6 +28,14 @@ class AdminPage(BasePage):
     JOB_TITLES_ITEM = (By.XPATH, "//a[contains(@class, 'oxd-topbar-body-nav-tab-link') and contains(., 'Job Titles')]")
     JOB_TITLE_FIELD = (By.XPATH, "//label[text()='Job Title']/parent::div/parent::div//input")
     
+    def wait_for_loading(self):
+        try:
+            WebDriverWait(self.driver, 30).until(
+                EC.invisibility_of_element_located(self.LOADER)
+            )
+        except:
+            pass
+    
     def navigate_to_admin(self):
         self.click(self.ADMIN_MENU)
         self.wait.until(EC.url_contains("admin"))
@@ -171,11 +179,15 @@ class AdminPage(BasePage):
     
     def click_delete_icon_generic(self, item_name):
         row_xpath = f"//div[@role='row' and contains(., '{item_name}')]"
-        self.wait.until(EC.visibility_of_element_located((By.XPATH, row_xpath)))
+        self.wait.until(EC.presence_of_element_located((By.XPATH, row_xpath)))
+        row_element = self.driver.find_element(By.XPATH, row_xpath)
         
-        btn_xpath = f"{row_xpath}//button[.//i[contains(@class, 'bi-trash')]]"
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, btn_xpath)))
-        self.click((By.XPATH, btn_xpath))
+        self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'auto', block: 'center'});", row_element)
+        btn_xpath = ".//button[.//i[contains(@class, 'bi-trash')]]"
+        delete_btn = row_element.find_element(By.XPATH, btn_xpath)
+        self.wait.until(EC.visibility_of(delete_btn))
+        self.wait.until(EC.element_to_be_clickable(delete_btn))
+        delete_btn.click()
     
     def confirm_delete(self):
         CONFIRM_BTN = (By.XPATH, "//button[contains(., ' Yes, Delete ')]")
