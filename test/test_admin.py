@@ -22,6 +22,23 @@ class TestAdmin:
         return driver
     
     @pytest.fixture
+    def setup_employee(self, driver, login):
+        pim_page = PIMPage(driver)
+        dashboard_page = DashboardPage(driver)
+        
+        first_name = Config.EMP_FIRST_NAME
+        last_name = f"{Config.EMP_LAST_NAME} {Config.get_random_id()}"
+        emp_id = Config.get_random_id()
+        print(f"\n[Fixture] Creating PIM Employee: {first_name} {last_name}")
+        
+        dashboard_page.navigate_to_menu("PIM")
+        pim_page.click_add_employee()
+        pim_page.fill_employee_data(first_name, last_name, emp_id)
+        pim_page.click_save()
+        pim_page.wait_for_save_completion()
+        return first_name
+    
+    @pytest.fixture
     def created_admin_user(self, driver, login):
         admin_page = AdminPage(driver)
         unique_id = Config.get_random_id()
@@ -52,13 +69,12 @@ class TestAdmin:
         admin_page.wait_for_save_completion()
         return job_title
     
-    def test_ohrm006_add_new_admin_user(self, driver, login):
+    def test_ohrm006_add_new_admin_user(self, driver, setup_employee):
         admin_page = AdminPage(driver)
-        unique_id = Config.get_random_id()
-        username = f"NewAdm{unique_id}"
-        emp_name = getattr(Config, 'EMP_FIRST_NAME', "Riski")
+        username = f"New{Config.NEW_ADMIN_USER}{Config.get_random_id()}"
+        emp_name = setup_employee
+        print(f"\n[Test] Adding Admin User: {username} linked to {emp_name}")
         
-        print(f"\n[Test] Adding Admin User: {username}")
         admin_page.navigate_to_admin()
         admin_page.click_add_user()
         admin_page.fill_user_data(emp_name, username, "Password123!", "Admin", "Enabled")
@@ -98,15 +114,17 @@ class TestAdmin:
         admin_page.navigate_to_admin()
         admin_page.search_user(old_user)
         admin_page.click_edit_user(old_user)
+        
+        admin_page.click(admin_page.USERNAME_FIELD)
+        admin_page.find(admin_page.USERNAME_FIELD).send_keys("\ue003" * 30)
         admin_page.set_text(admin_page.USERNAME_FIELD, new_user)
         admin_page.click_save()
         admin_page.wait_for_save_completion()
-        
-        print("[Test] Refreshing Admin Page to clear filters...")
         admin_page.navigate_to_admin()
-        print(f"[Test] Searching for new user: {new_user}")
-        admin_page.search_user(new_user)
         
+        print(f"[Test] Searching New User: {new_user}")
+        admin_page.search_user(new_user)
+        assert admin_page.verify_user_in_list(new_user) == True
     
     def test_ohrm010_add_new_job(self, driver, login):
         admin_page = AdminPage(driver)
