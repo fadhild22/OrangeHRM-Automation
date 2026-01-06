@@ -28,7 +28,6 @@ Dalam project ini, saya tidak hanya mengecek "Flow Positif" (Happy Path), tapi j
 * **Testing Framework:** Pytest
 
 ## 📂 Project Structure
-```text
 OrangeHRM-Automation/
 ├── pages/                  # Page Object Classes
 │   ├── base_page.py        # Wrapper for Selenium methods (Wait, Click, Input)
