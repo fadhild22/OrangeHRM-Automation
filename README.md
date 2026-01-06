@@ -27,23 +27,6 @@ Dalam project ini, saya tidak hanya mengecek "Flow Positif" (Happy Path), tapi j
 * **Web Automation:** Selenium WebDriver
 * **Testing Framework:** Pytest
 
-## 📂 Project Structure
-OrangeHRM-Automation/
-├── pages/                  # Page Object Classes
-│   ├── base_page.py        # Wrapper for Selenium methods (Wait, Click, Input)
-│   ├── login_page.py       # Locators & Methods for Login
-│   ├── dashboard_page.py   # Locators & Methods for Dashboard
-│   ├── pim_page.py         # PIM Module logic (Add/Edit/Delete Employee)
-│   └── admin_page.py       # Admin Module logic (User Management)
-├── test/                   # Test Scripts
-│   ├── test_login.py       # Login scenarios
-│   ├── test_pim.py         # Employee management scenarios
-│   └── test_admin.py       # Admin user management scenarios
-├── screenshots/            # Auto-captured screenshots on failure
-├── config.py               # Configuration & Data Generators
-├── requirements.txt        # Project dependencies
-└── README.md               # Project documentation
-
 ## 📸 How to Run My Code
 
 1.  **Clone this repository:**
