@@ -7,10 +7,10 @@
 ## 📋 Project Overview
 This repository contains a robust and scalable **Test Automation Framework** developed for the [OrangeHRM Demo Website](https://opensource-demo.orangehrmlive.com/). 
 
-🧪 Test Scenarios Covered
-
+## 🧪 Test Scenarios Covered
 You can view the detailed manual test cases (Steps, Expected Results, and Test Data) in the spreadsheet below:
-👉 [Test Case SpreadSheet]([https://opensource-demo.orangehrmlive.com/](https://docs.google.com/spreadsheets/d/1yLw1urhdShecnJPM9RFXwWDIQmJjo69pTQBGz0IsdC4/edit?usp=sharing))
+
+👉 [**Klik Disini: Test Case SpreadSheet**](https://docs.google.com/spreadsheets/d/1yLw1urhdShecnJPM9RFXwWDIQmJjo69pTQBGz0IsdC4/edit?usp=sharing)
 
 The framework is built using **Python** and **Selenium WebDriver**, implementing the **Page Object Model (POM)** design pattern to ensure code reusability and maintainability. It is designed to handle dynamic web elements, server latency, and complex test data dependencies.
 
