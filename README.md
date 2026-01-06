@@ -45,22 +45,23 @@ OrangeHRM-Automation/
 ├── requirements.txt        # Project dependencies
 └── README.md               # Project documentation
 
-## 💻 Cara Menjalankan Script Ini
-Jika kamu ingin mencoba menjalankan script ini di komputer kamu:
+## 📸 How to Run My Code
 
-1.  Download repository ini (klik tombol **Code** > **Download ZIP**).
-2.  Pastikan kamu sudah install **Python** dan **Google Chrome**.
-3.  Buka folder project ini di terminal / CMD.
-4.  Install library pendukung dengan mengetik:
+1.  **Clone this repository:**
+    ```bash
+    git clone [https://github.com/fadhild22/SwagLabs_Automation.git](https://github.com/fadhild22/SwagLabs_Automation.git)
+    ```
+
+2.  **Install requirements:**
     ```bash
     pip install -r requirements.txt
     ```
-5.  Jalankan testnya dengan perintah:
+
+3.  **Run the tests:**
     ```bash
-    pytest test/ -v -s --html=laporan.html
+    python -m unittest discover tests -v
     ```
-    *(Nanti akan muncul file `laporan.html` yang berisi hasil test lengkap)*
 
 ---
-**Dibuat oleh:** [Fadhil Darussalam]
-*Project ini dibuat untuk tujuan belajar dan portofolio QA API Automation.*
+**Created by:** Fadhil
+*A Junior QA Enthusiast looking for opportunities to learn and grow.*
