@@ -25,12 +25,13 @@ class LoginPage(BasePage):
             self.set_text(self.PASSWORD_FIELD, password)
         
         self.click(self.LOGIN_BTN)
-        self.wait.until(EC.url_contains("dashboard"))
     
     def get_error_message(self):
+        self.wait.until(EC.visibility_of_element_located(self.ERROR_ALERT))
         return self.get_text(self.ERROR_ALERT)
     
     def get_required_message(self):
+        self.wait.until(EC.visibility_of_element_located(self.REQUIRED_MSG))
         return self.get_text(self.REQUIRED_MSG)
     
     def click_forgot_password(self):

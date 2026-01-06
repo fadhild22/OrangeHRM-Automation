@@ -3,6 +3,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from pages.login_page import LoginPage
 from pages.dashboard_page import DashboardPage
 from config import Config
@@ -14,6 +16,7 @@ class TestLogin:
         login_page.open_url(Config.BASE_URL_UI)
         
         login_page.login(Config.ADMIN_USER, Config.ADMIN_PASS)
+        WebDriverWait(driver, 10).until(EC.url_contains("dashboard"))
         
         assert dashboard_page.get_header_title() == "Dashboard", "Login failed with valid credentials"
     
@@ -39,6 +42,7 @@ class TestLogin:
         login_page.open_url(Config.BASE_URL_UI)
         
         login_page.login(Config.ADMIN_USER, Config.ADMIN_PASS)
+        WebDriverWait(driver, 10).until(EC.url_contains("dashboard"))
         dashboard_page.logout()
         
         assert login_page.is_displayed(LoginPage.LOGIN_BTN), "Logout failed, login button not displayed"
